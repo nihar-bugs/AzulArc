@@ -29,31 +29,39 @@ const AddEmployee = () => {
   const [address, setAddress] = useState();
   const [photo, setPhoto] = useState();
 
+  var emailCheck = false;
+  var ageCheck = false;
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     validateEmail(email);
     validateAge(age);
 
-    try {
-      const res = await axios.post(
-        "http://localhost:3001/api/employees/create",
-        { name, email, age, date_of_birth, address, photo }
-      );
+    if (emailCheck && ageCheck) {
+      try {
+        const res = await axios.post(
+          "http://localhost:3001/api/employees/create",
+          { name, email, age, date_of_birth, address, photo }
+        );
 
-      if (res.data.name) {
-        alert("Employee Created Successfully");
-        setName("");
-        setEmail("");
-        setAge("");
-        setDate_Of_Birth("");
-        setAddress("");
-        setPhoto("");
-        navigate("/");
+        if (res.data.name) {
+          alert("Employee Created Successfully");
+          setName("");
+          setEmail("");
+          setAge("");
+          setDate_Of_Birth("");
+          setAddress("");
+          setPhoto("");
+          navigate("/");
+        }
+      } catch (err) {
+        console.log(err);
       }
-    } catch (err) {
-      console.log(err);
+    } else {
+      navigate("/addEmp");
     }
   };
 
@@ -72,6 +80,7 @@ const AddEmployee = () => {
   const validateEmail = (email) => {
     if (validator.isEmail(email)) {
       setEmail(email);
+      emailCheck = true;
     } else {
       alert("Enter valid Email!");
     }
@@ -82,6 +91,7 @@ const AddEmployee = () => {
       alert("Age can only be a number");
     } else {
       setAge(age);
+      ageCheck = true;
     }
   };
 

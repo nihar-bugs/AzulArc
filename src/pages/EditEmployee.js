@@ -35,6 +35,9 @@ const EditEmployee = () => {
   const [address, setAddress] = useState(employee.address);
   const [photo, setPhoto] = useState();
 
+  var emailCheck = false;
+  var ageCheck = false;
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -42,31 +45,35 @@ const EditEmployee = () => {
     validateEmail(email);
     validateAge(age);
 
-    try {
-      const res = await axios.patch(
-        "http://localhost:3001/api/employees/update",
-        {
-          id: employee._id,
-          name: name,
-          age: age,
-          email: email,
-          date_of_birth: date_of_birth,
-          address: address,
-          photo: photo,
+    if (emailCheck && ageCheck) {
+      try {
+        const res = await axios.patch(
+          "http://localhost:3001/api/employees/update",
+          {
+            id: employee._id,
+            name: name,
+            age: age,
+            email: email,
+            date_of_birth: date_of_birth,
+            address: address,
+            photo: photo,
+          }
+        );
+        if (res.data.name) {
+          alert("Employee Updated Successfully");
+          setName("");
+          setEmail("");
+          setAge("");
+          setDate_Of_Birth("");
+          setAddress("");
+          setPhoto("");
+          navigate("/");
         }
-      );
-      if (res.data.name) {
-        alert("Employee Updated Successfully");
-        setName("");
-        setEmail("");
-        setAge("");
-        setDate_Of_Birth("");
-        setAddress("");
-        setPhoto("");
-        navigate("/");
+      } catch (err) {
+        console.log(err);
       }
-    } catch (err) {
-      console.log(err);
+    } else {
+      navigate("/editEmp");
     }
   };
 
@@ -85,6 +92,7 @@ const EditEmployee = () => {
   const validateEmail = (email) => {
     if (validator.isEmail(email)) {
       setEmail(email);
+      emailCheck = true;
     } else {
       alert("Enter valid Email!");
     }
@@ -95,6 +103,7 @@ const EditEmployee = () => {
       alert("Age can only be a number");
     } else {
       setAge(age);
+      ageCheck = true;
     }
   };
 
